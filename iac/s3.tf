@@ -57,3 +57,15 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_rules" {
     }
   }
 }
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = aws_s3_bucket.images_bucket.id
+
+  queue {
+    queue_arn     = aws_sqs_queue.main_queue.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "uploads/" 
+  }
+
+  depends_on = [aws_sqs_queue_policy.s3_to_sqs_policy]
+}

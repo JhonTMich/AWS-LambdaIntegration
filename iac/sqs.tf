@@ -17,3 +17,26 @@ resource "aws_sqs_queue" "main_queue" {
     maxReceiveCount     = 3
   })
 }
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue_policy
+resource "aws_sqs_queue_policy" "s3_to_sqs_policy" {
+  queue_url = aws_sqs_queue.main_queue.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "s3.amazonaws.com"
+        }
+        Action   = "sqs:SendMessage"
+        Resource = aws_sqs_queue.main_queue.arn
+        Condition = {
+          ArnEquals = {
+            "aws:SourceArn" = aws_s3_bucket.images_bucket.arn
+          }
+        }
+      }
+    ]
+  })
+}
