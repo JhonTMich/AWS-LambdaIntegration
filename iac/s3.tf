@@ -1,0 +1,59 @@
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+resource "aws_s3_bucket" "images_bucket" {
+  bucket = "image-processor-${terraform.workspace}-images-${var.suffix}"
+  force_destroy = true 
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block
+resource "aws_s3_bucket_public_access_block" "private_access" {
+  bucket                  = aws_s3_bucket.images_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
+  bucket = aws_s3_bucket.images_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.images_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_rules" {
+  bucket = aws_s3_bucket.images_bucket.id
+
+  rule {
+    id     = "uploads-expiration"
+    status = "Enabled"
+    filter {
+      prefix = "uploads/"
+    }
+    expiration {
+      days = 30
+    }
+  }
+
+  rule {
+    id     = "processed-expiration"
+    status = "Enabled"
+    filter {
+      prefix = "processed/"
+    }
+    expiration {
+      days = 90
+    }
+  }
+}
