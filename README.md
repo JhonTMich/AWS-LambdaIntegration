@@ -1,0 +1,1 @@
+La arquitectura debe poder desplegarse en 3 entornos: DEV, QA y PROD.
