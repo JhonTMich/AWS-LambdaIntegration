@@ -50,3 +50,9 @@ curl -X POST api-url \
   --data-binary "@C:ruta/foto"
 ```
 "api-url" la dan despues del "terraform apply" de antes
+
+Destruir los recursos
+---
+```
+terraform destroy
+```
