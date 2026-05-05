@@ -4,7 +4,8 @@
   "description": "Leer SQS recortar con Sharp y guardar en S3",
   "main": "index.js",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1041.0",
+    "@aws-sdk/client-s3": "^3.1043.0",
+    "jimp": "^0.22.12",
     "sharp": "^0.33.5"
   }
 }

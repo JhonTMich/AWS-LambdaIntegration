@@ -1,11 +1,8 @@
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue
-
 resource "aws_sqs_queue" "dlq" {
   name                      = "image-processor-${terraform.workspace}-image-dlq"
-  message_retention_seconds = 1209600 # 14 días (en segundos)
+  message_retention_seconds = 1209600 
 }
 
-# 2. Main Queue
 resource "aws_sqs_queue" "main_queue" {
   name                       = "image-processor-${terraform.workspace}-image-queue"
   visibility_timeout_seconds = 360   
@@ -17,7 +14,6 @@ resource "aws_sqs_queue" "main_queue" {
     maxReceiveCount     = 3
   })
 }
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue_policy
 resource "aws_sqs_queue_policy" "s3_to_sqs_policy" {
   queue_url = aws_sqs_queue.main_queue.id
 

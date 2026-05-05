@@ -1,1 +1,4 @@
-variable "suffix" {}
+variable "suffix" {
+  type        = string
+  default     = "upao"
+}

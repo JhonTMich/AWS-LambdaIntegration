@@ -1,10 +1,8 @@
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
 resource "aws_s3_bucket" "images_bucket" {
   bucket = "image-processor-${terraform.workspace}-images-${var.suffix}"
   force_destroy = true 
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block
 resource "aws_s3_bucket_public_access_block" "private_access" {
   bucket                  = aws_s3_bucket.images_bucket.id
   block_public_acls       = true
@@ -13,7 +11,6 @@ resource "aws_s3_bucket_public_access_block" "private_access" {
   restrict_public_buckets = true
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
   bucket = aws_s3_bucket.images_bucket.id
   rule {
@@ -23,7 +20,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning
 resource "aws_s3_bucket_versioning" "versioning" {
   bucket = aws_s3_bucket.images_bucket.id
   versioning_configuration {
@@ -31,7 +27,6 @@ resource "aws_s3_bucket_versioning" "versioning" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration
 resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_rules" {
   bucket = aws_s3_bucket.images_bucket.id
 
@@ -57,7 +52,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_rules" {
     }
   }
 }
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.images_bucket.id
 
